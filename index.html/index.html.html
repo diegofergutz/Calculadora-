@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadoras de Custo e Preço de Venda</title>
+    <!-- Incluindo o Tailwind CSS para um design moderno e responsivo -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Usando a fonte Inter para um visual mais limpo */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4 lg:p-8">
+
+    <!-- Container principal que agrupa as três calculadoras -->
+    <div class="w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+        <!-- Calculadora 1: Formação de Custo -->
+        <div class="w-full mx-auto bg-white rounded-xl shadow-lg p-8 flex flex-col">
+            <!-- Wrapper para o conteúdo superior que vai crescer e empurrar o de baixo -->
+            <div class="flex-grow">
+                <div class="mb-6 text-center">
+                    <h1 class="text-2xl font-bold text-gray-800">1. Custo do Produto</h1>
+                    <p class="text-gray-500 mt-1">Calcule o custo de importação.</p>
+                </div>
+                <div class="space-y-4">
+                    <div>
+                        <label for="custoProdutoDolar_1" class="block text-sm font-medium text-gray-700 mb-1">Custo (USD)</label>
+                        <input type="number" id="custoProdutoDolar_1" placeholder="Ex: 10.00" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+                    </div>
+                    <div>
+                        <label for="cotacaoDolar_1" class="block text-sm font-medium text-gray-700 mb-1">Cotação (R$)</label>
+                        <input type="number" id="cotacaoDolar_1" placeholder="Cotação do dia" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+                    </div>
+                    <div>
+                        <label for="percentualFrete_1" class="block text-sm font-medium text-gray-700 mb-1">Frete (%)</label>
+                        <input type="number" id="percentualFrete_1" placeholder="Ex: 15" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+                    </div>
+                </div>
+            </div>
+            <!-- Bloco inferior que será alinhado na base do card -->
+            <div class="pt-6 space-y-4">
+                <button onclick="calcularCusto()" class="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-700 transition duration-300">Calcular Custo Final</button>
+                <div id="resultado_1" class="text-center pt-4" style="display: none;">
+                    <p class="text-gray-600">Custo Final em Reais:</p>
+                    <p id="precoFinal_1" class="text-3xl font-extrabold text-gray-900 mt-2"></p>
+                </div>
+                <div id="mensagemErro_1" class="text-center text-red-500 font-medium h-5"></div>
+            </div>
+        </div>
+
+        <!-- Calculadora 2: Análise de Venda (Dinheiro/Pix) -->
+        <div class="w-full mx-auto bg-white rounded-xl shadow-lg p-8 flex flex-col">
+            <div class="flex-grow">
+                <div class="mb-6 text-center">
+                    <h1 class="text-2xl font-bold text-gray-800">2. Análise de Venda</h1>
+                    <p class="text-gray-500 mt-1">Analise o lucro de uma venda à vista.</p>
+                </div>
+                <div class="space-y-4">
+                    <div>
+                        <label for="custoFinalProduto_2" class="block text-sm font-medium text-gray-700 mb-1">Custo do Produto (R$)</label>
+                        <input type="number" id="custoFinalProduto_2" placeholder="Custo do produto" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
+                    </div>
+                     <div>
+                        <label for="precoVenda_2" class="block text-sm font-medium text-gray-700 mb-1">Preço de Venda (R$)</label>
+                        <input type="number" id="precoVenda_2" placeholder="Ex: 150.00" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
+                    </div>
+                </div>
+            </div>
+            <!-- Bloco inferior que será alinhado na base do card -->
+            <div class="pt-6 space-y-4">
+                <button onclick="analisarVendaDinheiro()" class="w-full bg-green-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-green-700 transition duration-300">Analisar Venda</button>
+                <div id="resultado_2" class="text-center pt-4" style="display: none;">
+                    <div class="flex justify-center items-center mt-4 text-md space-x-4">
+                        <p><span class="font-medium text-gray-600">Lucro:</span> <span id="lucroReais_2" class="font-bold text-green-700"></span></p>
+                        <p><span class="font-medium text-gray-600">Margem:</span> <span id="margemLucro_2" class="font-bold text-green-700"></span></p>
+                    </div>
+                </div>
+                <div id="mensagemErro_2" class="text-center text-red-500 font-medium h-5"></div>
+            </div>
+        </div>
+
+        <!-- Calculadora 3: Preço de Venda (Cartão) -->
+        <div class="w-full mx-auto bg-white rounded-xl shadow-lg p-8 flex flex-col">
+            <div class="flex-grow">
+                <div class="mb-6 text-center">
+                    <h1 class="text-2xl font-bold text-gray-800">3. Venda (Cartão)</h1>
+                    <p class="text-gray-500 mt-1">Calcule o preço com todas as taxas.</p>
+                </div>
+                <div class="space-y-4">
+                    <div>
+                        <label for="custoFinalProduto_3" class="block text-sm font-medium text-gray-700 mb-1">Custo do Produto (R$)</label>
+                        <input type="number" id="custoFinalProduto_3" placeholder="Custo do produto" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition">
+                    </div>
+                    <div>
+                        <label for="precoDinheiroPix_3" class="block text-sm font-medium text-gray-700 mb-1">Valor a Receber (Dinheiro/Pix) (R$)</label>
+                        <input type="number" id="precoDinheiroPix_3" placeholder="Valor líquido desejado" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
+                    </div>
+                    <div>
+                        <label for="parcelas_3" class="block text-sm font-medium text-gray-700 mb-1">Plano de Pagamento</label>
+                        <select id="parcelas_3" onchange="atualizarTaxaECalcular()" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition bg-white">
+                            <option value="debito">Débito</option>
+                            <option value="1">Crédito 1x</option>
+                            <option value="2">Crédito 2x</option>
+                            <option value="3">Crédito 3x</option>
+                            <option value="4">Crédito 4x</option>
+                            <option value="5">Crédito 5x</option>
+                            <option value="6">Crédito 6x</option>
+                            <option value="7">Crédito 7x</option>
+                            <option value="8">Crédito 8x</option>
+                            <option value="9">Crédito 9x</option>
+                            <option value="10">Crédito 10x</option>
+                            <option value="11">Crédito 11x</option>
+                            <option value="12">Crédito 12x</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="taxaCartaoDisplay_3" class="block text-sm font-medium text-gray-700 mb-1">Taxa Aplicada (%)</label>
+                        <input type="number" id="taxaCartaoDisplay_3" class="w-full px-4 py-2 border border-gray-200 bg-gray-100 rounded-lg" readonly>
+                    </div>
+                    <div>
+                        <label for="impostos_3" class="block text-sm font-medium text-gray-700 mb-1">Impostos (%)</label>
+                        <input type="number" id="impostos_3" value="4.3" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition">
+                    </div>
+                </div>
+            </div>
+            <!-- Bloco inferior que será alinhado na base do card -->
+            <div class="pt-6 space-y-2">
+                <button onclick="calcularPrecoVendaCartao()" class="w-full bg-purple-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-purple-700 transition duration-300">Calcular Preço de Venda</button>
+                <div id="resultado_3" class="text-center pt-4" style="display: none;">
+                    <p class="text-gray-600">Preço de Venda (Plano Selecionado):</p>
+                    <p id="precoFinal_3" class="text-3xl font-extrabold text-gray-900 mt-2"></p>
+                    <div class="flex justify-center items-center mt-4 text-md space-x-4">
+                        <p><span class="font-medium text-gray-600">Lucro Líquido:</span> <span id="lucroReais_3" class="font-bold text-purple-700"></span></p>
+                        <p><span class="font-medium text-gray-600">Margem:</span> <span id="margemLucro_3" class="font-bold text-purple-700"></span></p>
+                    </div>
+                    <div id="simulacaoParcelas_3" class="mt-4 text-left" style="display: none;">
+                        <h4 class="font-semibold text-gray-700 text-center border-t pt-3">Opções de Pagamento</h4>
+                        <ul id="listaParcelas_3" class="text-sm text-gray-600 mt-2 space-y-1">
+                        </ul>
+                    </div>
+                </div>
+                <div id="mensagemErro_3" class="text-center text-red-500 font-medium h-5"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // --- INÍCIO DA TABELA DE TAXAS ---
+        // EDITE OS VALORES ABAIXO de acordo com as taxas da sua maquininha.
+        const taxasParcelamento = {
+            'debito': 1.37,
+            '1': 3.15,   // Crédito 1x
+            '2': 5.39,   // Crédito 2x
+            '3': 6.12,   // etc...
+            '4': 6.85,
+            '5': 7.57,
+            '6': 8.28,
+            '7': 8.99,
+            '8': 9.69,
+            '9': 10.38,
+            '10': 11.06,
+            '11': 11.74,
+            '12': 12.4
+        };
+        // --- FIM DA TABELA DE TAXAS ---
+
+
+        // Função para a Calculadora 1 (Custo)
+        function calcularCusto() {
+            const custoProdutoDolar = parseFloat(document.getElementById('custoProdutoDolar_1').value);
+            const cotacaoDolar = parseFloat(document.getElementById('cotacaoDolar_1').value);
+            const percentualFrete = parseFloat(document.getElementById('percentualFrete_1').value);
+            const resultadoDiv = document.getElementById('resultado_1');
+            const mensagemErroDiv = document.getElementById('mensagemErro_1');
+
+            if (isNaN(custoProdutoDolar) || isNaN(cotacaoDolar) || isNaN(percentualFrete) || custoProdutoDolar <= 0 || cotacaoDolar <= 0 || percentualFrete < 0) {
+                mensagemErroDiv.textContent = 'Valores inválidos.';
+                resultadoDiv.style.display = 'none';
+                return;
+            }
+
+            mensagemErroDiv.textContent = '';
+            const custoProdutoReais = custoProdutoDolar * cotacaoDolar;
+            const valorFrete = custoProdutoReais * (percentualFrete / 100);
+            const precoFinal = custoProdutoReais + valorFrete;
+            document.getElementById('precoFinal_1').textContent = precoFinal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            resultadoDiv.style.display = 'block';
+
+            // MELHORIA: Auto-preenche os campos de custo das outras calculadoras
+            const custoFinalArredondado = precoFinal.toFixed(2);
+            document.getElementById('custoFinalProduto_2').value = custoFinalArredondado;
+            document.getElementById('custoFinalProduto_3').value = custoFinalArredondado;
+        }
+
+        // Função para a Calculadora 2 (Análise de Venda)
+        function analisarVendaDinheiro() {
+            const custoFinalProduto = parseFloat(document.getElementById('custoFinalProduto_2').value);
+            const precoVenda = parseFloat(document.getElementById('precoVenda_2').value);
+            const resultadoDiv = document.getElementById('resultado_2');
+            const mensagemErroDiv = document.getElementById('mensagemErro_2');
+
+            if (isNaN(custoFinalProduto) || isNaN(precoVenda) || custoFinalProduto <= 0 || precoVenda <= 0) {
+                mensagemErroDiv.textContent = 'Custo e Preço de Venda são obrigatórios.';
+                resultadoDiv.style.display = 'none';
+                return;
+            }
+
+            if (custoFinalProduto > precoVenda) {
+                mensagemErroDiv.textContent = 'Preço de venda deve ser maior que o custo.';
+                resultadoDiv.style.display = 'none';
+                return;
+            }
+
+            mensagemErroDiv.textContent = '';
+            const lucroReais = precoVenda - custoFinalProduto;
+            const margemLucro = (lucroReais / precoVenda) * 100;
+
+            document.getElementById('lucroReais_2').textContent = lucroReais.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            document.getElementById('margemLucro_2').textContent = margemLucro.toFixed(2) + '%';
+            resultadoDiv.style.display = 'block';
+
+            // Auto-preenche o campo de preço à vista na Calculadora 3
+            document.getElementById('precoDinheiroPix_3').value = precoVenda.toFixed(2);
+        }
+
+        // Função para a Calculadora 3 (Preço de Venda Cartão)
+        function calcularPrecoVendaCartao() {
+            const custoFinalProduto = parseFloat(document.getElementById('custoFinalProduto_3').value);
+            const precoDinheiroPix = parseFloat(document.getElementById('precoDinheiroPix_3').value);
+            const planoSelecionado = document.getElementById('parcelas_3').value;
+            const taxaCartao = taxasParcelamento[planoSelecionado] || 0;
+            const impostos = parseFloat(document.getElementById('impostos_3').value) || 0;
+            
+            const resultadoDiv = document.getElementById('resultado_3');
+            const mensagemErroDiv = document.getElementById('mensagemErro_3');
+
+            if (isNaN(custoFinalProduto) || isNaN(precoDinheiroPix) || precoDinheiroPix <= 0) {
+                mensagemErroDiv.textContent = 'Custo e Preço Dinheiro/Pix são obrigatórios.';
+                resultadoDiv.style.display = 'none';
+                return;
+            }
+
+            const somaPercentuais = taxaCartao + impostos;
+
+            if (somaPercentuais >= 100) {
+                 mensagemErroDiv.textContent = 'A soma das taxas não pode ser >= 100%.';
+                 resultadoDiv.style.display = 'none';
+                 return;
+            }
+
+            mensagemErroDiv.textContent = '';
+            // LÓGICA NOVA: Calcula o preço de venda a partir do valor a receber
+            const divisor = 1 - (somaPercentuais / 100);
+            const precoVendaPrincipal = precoDinheiroPix / divisor;
+            const lucroReais = precoDinheiroPix - custoFinalProduto;
+            const margemLucro = (lucroReais / precoDinheiroPix) * 100;
+            
+            document.getElementById('precoFinal_3').textContent = precoVendaPrincipal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            document.getElementById('lucroReais_3').textContent = lucroReais.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            document.getElementById('margemLucro_3').textContent = margemLucro.toFixed(2) + '%';
+            resultadoDiv.style.display = 'block';
+
+            gerarSimulacao(precoDinheiroPix, impostos);
+        }
+
+        // Função central da simulação
+        function gerarSimulacao(valorAReceber, impostos) {
+            const listaParcelasUl = document.getElementById('listaParcelas_3');
+            const simulacaoDiv = document.getElementById('simulacaoParcelas_3');
+            listaParcelasUl.innerHTML = '';
+
+            // 1. Preço à vista (Dinheiro/Pix) - LIDO DO CAMPO MANUAL
+            if (valorAReceber > 0) {
+                const valorFormatadoDinheiro = valorAReceber.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                const listItemDinheiro = document.createElement('li');
+                listItemDinheiro.className = 'font-bold text-green-600 pb-2 mb-2 border-b';
+                listItemDinheiro.innerHTML = `<span class="w-24 inline-block">Dinheiro/Pix:</span> ${valorFormatadoDinheiro}`;
+                listaParcelasUl.appendChild(listItemDinheiro);
+            }
+
+            // 2. Preço no Débito
+            const taxaDebito = taxasParcelamento['debito'] || 0;
+            const somaPercentuaisDebito = taxaDebito + impostos; 
+            if (somaPercentuaisDebito < 100) {
+                const divisorDebito = 1 - (somaPercentuaisDebito / 100);
+                const precoVendaDebito = valorAReceber / divisorDebito;
+                const valorFormatadoDebito = precoVendaDebito.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                const listItemDebito = document.createElement('li');
+                listItemDebito.className = 'font-semibold text-blue-600 pb-2 mb-2 border-b';
+                listItemDebito.innerHTML = `<span class="w-24 inline-block">Débito:</span> ${valorFormatadoDebito}`;
+                listaParcelasUl.appendChild(listItemDebito);
+            }
+
+
+            // 3. Subtítulo
+            const subTitulo = document.createElement('li');
+            subTitulo.className = 'font-semibold text-gray-500 text-center pt-2 text-sm';
+            subTitulo.textContent = 'Parcelamento no Cartão';
+            listaParcelasUl.appendChild(subTitulo);
+
+            // 4. Parcelas no Crédito
+            for (let i = 1; i <= 12; i++) {
+                const taxaParcela = taxasParcelamento[i.toString()] || 0;
+                const somaPercentuaisParcela = taxaParcela + impostos;
+
+                if (somaPercentuaisParcela < 100) {
+                    const divisorParcela = 1 - (somaPercentuaisParcela / 100);
+                    const precoVendaTotalParcela = valorAReceber / divisorParcela;
+                    const valorParcela = precoVendaTotalParcela / i;
+
+                    const valorFormatado = valorParcela.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                    const totalFormatado = precoVendaTotalParcela.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+                    const listItem = document.createElement('li');
+                    listItem.innerHTML = `<span class="font-semibold w-12 inline-block">${i}x de</span> ${valorFormatado} <span class="text-gray-500 text-xs">(Total: ${totalFormatado})</span>`;
+                    listaParcelasUl.appendChild(listItem);
+                }
+            }
+            simulacaoDiv.style.display = 'block';
+        }
+
+        function atualizarTaxaECalcular() {
+            const planoSelecionado = document.getElementById('parcelas_3').value;
+            const taxa = taxasParcelamento[planoSelecionado] || 0;
+            document.getElementById('taxaCartaoDisplay_3').value = taxa.toFixed(2);
+        }
+
+        window.addEventListener('DOMContentLoaded', (event) => {
+            atualizarTaxaECalcular();
+        });
+    </script>
+
+</body>
+</html>
